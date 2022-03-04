@@ -1,0 +1,108 @@
+{%extends 'base.html'%}
+{%block title%} Dojos and Ninjas {%endblock%}
+{%block header%} {{output.name | upper}} {%endblock%}
+{%block main%}
+<div>
+    <!-- back to ninjas -->
+    <a href="/read/ninjas">Go Back</a>
+</div>
+
+<div>
+    <!-- NINJA INFO -->
+    <h3>Address Info</h3>
+    <table>
+        <th colspan="4">
+            {{output.name|title}}
+        </th>
+        <tr>
+            <td>
+                {{output.street | title}}
+            </td>
+            <td>
+                {{output.city | title}}
+            </td>
+            <td>
+                {{output.state | upper}}
+            </td>
+            <td>
+                {{output.zip}}
+            </td>
+        </tr>
+    </table>
+</div>
+<div>
+    <h3>What do I like?</h3>
+    <table>
+        <th>
+            <!-- INTEREST INFO -->
+            Interest
+        </th>
+        <th>
+            Description
+        </th>
+        {% for i in elements%}
+            <tr>
+                <td>
+                    <a href="/read/interest/{{i['id']}}">{{i['name']|title}}</a>
+                </td>
+                <td>
+                    {{i['description']}}
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+</div>
+
+<div>
+    <!-- UPDATE NINJA -->
+    <h3>Update</h3>
+    <form action="/change/ninja" method="post">
+        <!-- name -->
+        <label for="name">
+            Name:
+        </label>
+        <input type="text" name="name" value="{{output.name}}">
+        <!-- dojo -->
+        <label for="dojo">
+            Dojo
+        </label>
+        <select name="dojo">
+            {%for i in dojos%}
+                <option value="{{i.id}}">
+                    {{i.name}}
+                </option>
+            {%endfor%}
+        </select>
+        <!-- address -->
+        <label for="street">
+            Address
+        </label>
+        <input type="text" name="street" value="{{output.street}}">
+        <!-- city -->
+        <label for="city">
+            City
+        </label>
+        <input type="text" name="city" value="{{output.city}}">
+        <!-- state -->
+        <label for="state">
+            State Abbr
+        </label>
+        <input type="text" name="state" value="{{output.state}}">
+        <!-- zip -->
+        <label for="zip">
+            Zip
+        </lable>
+        <input type="text" name="zip" value="{{output.zip}}">
+        <!-- hidden -->
+        <input type="hidden" name="id" value="{{output.id}}">
+        <input type="hidden" name="address_id" value="{{address_id}}"
+        <!-- submit -->
+        <input type="submit" value="Edit Ninja">
+    </form>
+</div>
+
+<div>
+    <!-- back to ninjas -->
+    <a href="/read/ninjas">Go Back</a>
+</div>
+{%endblock%}

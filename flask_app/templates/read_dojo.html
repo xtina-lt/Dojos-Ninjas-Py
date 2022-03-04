@@ -1,0 +1,110 @@
+{%extends 'base.html'%}
+{%block title%} Dojos and Ninjas {%endblock%}
+{%block header%} {{output.name}} {%endblock%}
+{%block main%}
+<div>
+    <h3>Location</h3>
+    <table>
+        <th colspan="4">
+            Address
+        </th>
+        <th>
+            Ninjas
+        </th>
+        <tr>
+            <td>
+                {{output.street | title}} 
+            </td>
+            <td>
+                {{output.city | capitalize}}
+            </td>
+            <td>
+                {{output.state | upper}}
+            </td>
+            <td>
+                {{output.zip}}
+            </td>
+            <td>
+                {{output.holds | length}}
+            </td>
+        </tr>
+    </table>
+</div>
+
+<div>
+    <h3>Ninjas</h3>
+    <table>
+        <th>
+            Ninjas
+        </th>
+        <th>
+            City
+        </th>
+        <th>
+            State
+        </th>
+        <th>
+            Options
+        </th>
+        {% for i in output.holds %}
+        <tr>
+            <td>
+                <a href="/read/ninja/{{i.id}}">{{i.name | title}}</a>
+            </td>
+            <td>
+                {{i.city}}
+            </td>
+            <td>
+                {{i.state}}
+            </td>
+            <td>
+                <a href="/read/ninja/{{i.id}}">Change Dojo</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+<div>
+    <a href="/read/dojos">Back</a>
+</div>
+
+<div>
+    <h3>
+        Edit Dojo
+    </h3>
+    <form action="/change/dojo" method="POST">
+        <!-- address_id -->
+        <input type="hidden" name="address_id" value="{{address_id}}">
+        <!-- street -->
+        <label for="street">
+            Street:
+        </label>
+        <input type="text" name="street" value="{{output.street}}">
+        <!-- city -->
+        <label for="city">
+            City:
+        </label>
+        <input type="text" name="city" value="{{output.city}}">
+        <!-- state -->
+        <label>
+            State Abbreviation:
+        </label>
+        <input type="text" name="state" value="{{output.city}}">
+        <!-- zip -->
+        <label>
+            Zip:
+        </label>
+        <input type="text" name="zip" value="{{output.zip}}">
+        <!-- dojo name -->
+        <label for="name">
+            Name:
+        </label>
+        <input type="text" name="name" value="{{output.name}}">
+        <!-- dojo_id -->
+        <input type="hidden" name="id" value="{{output.id}}">
+        <!-- submit -->
+        <input type="submit" value="Update Dojo">
+    </form>
+</div>
+{%endblock%}
