@@ -3,7 +3,9 @@
 {%block header%} Dojos {%endblock%}
 {%block main%}
 <div>
-    <h3>Dojos</h3>
+    <h3>
+        Dojos
+    </h3>
     <table>
         <th>
             Name
@@ -27,22 +29,27 @@
         {%for i in output%}
             <tr>
                 <td>
-                    <a href="/read/dojo/{{i.id}}">{{i.name.title()}}</a>
+                    <a href="/read/dojo/{{i.id}}">
+                        {{i.name.title()}}
+                    </a>
                 </td>
                 <td>
-                    {{i.street}}
+                    {{i.address.street}}
                 </td>
                 <td>
-                    {{i.city}}
+                    {{i.address.city}}
                 </td>
                 <td>
-                    {{i.state}}
+                    {{i.address.state}}
                 </td>
                 <td>
-                    {{i.zip}}
+                    {{i.address.zip}}
                 </td>
                 <td>
-                    <a href='/delete/dojo/{{i.id}}'>Delete</a>
+                    {{i.id}} {{i.address.id}}
+                    <a href='/delete/dojo/{{i.id}}/{{i.address.id}}'>
+                        Delete
+                    </a>
                 </td>
             </tr>
         {%endfor%}

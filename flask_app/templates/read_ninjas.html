@@ -24,19 +24,19 @@
         <!-- select * from NINJAS -->
             <tr>
                 <td>
-                    <a href="/read/ninja/{{i.id}}">{{i.name.title()}}</a>
+                    <a href="/read/ninja/{{i.id}}">{{i.name}}</a>
                 </td>
                 <td>
-                    {{i.city}}
+                    {{i.address.city}}
                 </td>
                 <td>
-                    {{i.state}}
+                    {{i.address.state}}
                 </td>
                 <td>
-                    {{i.dojo}}
+                    {{get[i.dojo_id].name}}
                 </td>
                 <td>
-                    <a href='/delete/ninja/{{i.id}}'>Delete  {{i.id}}</a>
+                    <a href='/delete/ninja/{{i.id}}/{{i.address.id}}'>Delete  {{i.id}} {{i.address.id}}</a>
                 </td>
             </tr>
         {%endfor%}
@@ -52,11 +52,11 @@
         </label>
         <input type="text" name="name">
         <!-- dojo -->
-        <label for="dojo">
+        <label for="dojo_id">
             Dojo
         </label>
-        <select name="dojo">
-            {%for i in dojos%}
+        <select name="dojo_id">
+            {%for i in get%}
             <!-- select * from dojos -->
                 <option value="{{i.id}}">
                     {{i.name}}

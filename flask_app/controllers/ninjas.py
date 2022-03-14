@@ -4,6 +4,8 @@ from flask_app import app
 # 2) import application
 from flask_app.models.ninja import Ninja
 from flask_app.models.dojo import Dojo
+from flask_app.models.interest import Interest
+from flask_app.models.address import Address
 # 3) import models
 
 @app.route('/')
@@ -14,42 +16,32 @@ def index():
 '''READ'''
 @app.route('/read/ninjas')
 def read_all():
-    dojos = Dojo.select_all()
-    # 1) select * from dojos
-    results = Ninja.select_all()
-    # 2) select * from ninjas
-    return render_template("read_ninjas.html", output = results, dojos = dojos)
+    return render_template("read_ninjas.html", output = Ninja.select_all(), get=Dojo.select_all())
 
 @app.route("/read/ninja/<id>")
 def read_ninja(id):
 # 1) take in id parameter
     data={"id": id}
     # 2) save to data dict
-    output = Ninja.select_one(data)
-    # 3) get info for one ninja using data dict
-    elements = Ninja.get_interests(data)
-    print(elements)
-    # 4) get interests per ninja using data dict
-    dojos = Dojo.select_all()
-    # 5) select * from dojos - for update select dropdown
-    address_id = Ninja.get_address_id(data)
-    # 6) select address_id where ninjas.id=data
-    return render_template("read_ninja.html", output = output, elements = elements, dojos = dojos, address_id = address_id)
+    result = Ninja.select_one(data)
+    elements = Interest.select_one_ninja(data)
+    get_dojos = Dojo.select_all()
+    return render_template("read_ninja.html", output = result,  elements = elements, get = get_dojos)
 
 '''CREATE'''
 @app.route("/process/ninja", methods=["POST"])
 def create_ninja():
-    address = {k:v for k,v in request.form.items() if k != "name" and k !="dojo"}
+    address = {k:v for k,v in request.form.items() if k != "name" and k !="dojo_id"}
     # address = {'address': 't', 'city': 't', 'state': 'tt', 'zip': '00000'}
     # 1) generate address information dictionary
-    data = {k:v for k,v in request.form.items() if k=="name" or k=="dojo"}
+    data = {k:v for k,v in request.form.items() if k=="name" or k=="dojo_id"}
     # data = {'name': 't', 'dojo': '1'}
     # 2) generate ninja data
-    data["address_id"] = Ninja.insert_address(address)
+    data["address_id"] = Address.insert(address)
     # 3) insert into addresses id value(address)
     # 3) save the address id from insert
     # 3) USE AS FOREIN KEY FOR NINJA DATA
-    Ninja.insert_ninja(data)
+    Ninja.insert(data)
     # 4) insert values(name, dojo_id, address_id)
     return redirect("/read/ninjas")
 
@@ -68,9 +60,9 @@ def change_ninja():
     # 2) get ninja info from form
         "id": request.form["id"],
         "name": request.form["name"],
-        "dojo": request.form["dojo"]
+        "dojo_id": request.form["dojo_id"]
     }
-    Ninja.update_address(address)
+    Address.update(address)
     # 3) address and dojo are foregn keys
     # 3) good practice to do those first
     # 3) cannot be updated at the same time
@@ -79,21 +71,11 @@ def change_ninja():
     return redirect(f"/read/ninja/{data['id']}")
 
 '''DELETE'''
-@app.route("/delete/ninja/<id>")
-def delete_ninja(id):
-    data={"id":id}
-    # 1) get ninja id from url
-    address_id = Ninja.get_address_id(data)
-    # 2) obtain address id by SQL query using data from url
-    # 2) select address_id from addresses where id=id
-    data["address_id"] = address_id
-    # 3) save address id from query to data dictionary
-    # 3) data{"address_id" : Ninja.get_daddress_id()}
-
-    Ninja.delete_address(data)
-    # 4) deleteing address cascades to deleting ninja
-    # 4) use data dictionary
-    # 4) delete from addresses where id=id
+@app.route("/delete/ninja/<id>/<address_id>")
+def delete_ninja(id, address_id):
+    data={"id":id, "address_id":address_id}
+    Ninja.delete(data)
+    Address.delete(data)
     return redirect("/read/ninjas")
 
 

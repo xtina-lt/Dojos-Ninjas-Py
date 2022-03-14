@@ -1,5 +1,6 @@
 from flask_app.config.mysqlconnection import connectToMySQL
 # 1) IMPORT CONNECTION FROM CONFIG FOLDER
+from flask_app.models.address import Address
 
 class Ninja:
     db = 'dojos_ninjas_schema'
@@ -7,32 +8,47 @@ class Ninja:
     def __init__(self, data):
         self.id = data["id"]
         self.name = data["name"]
-        self.created_at = data["created_at"]
-        self.updated_at = data["updated_at"]
         self.dojo_id = data["dojo_id"]
-        self.dojo = data["dojo"]
-        self.street = data["street"]
-        self.city  = data["city"]
-        self.state = data["state"]
-        self.zip = data["zip"]
+        self.address = None
     
-    '''READ'''
+    '''READ ALL'''
     @classmethod
-    def select_all(cls):
-        query = "SELECT ninjas.id, ninjas.name AS name, dojos.id AS dojo_id, dojos.name AS dojo, street, city, state, zip, ninjas.created_at, ninjas.updated_at  FROM ninjas JOIN addresses ON addresses.id = ninjas.address_id JOIN dojos ON dojos.id = ninjas.dojo_id"
+    def select_all(cls): #
+        query = "SELECT * FROM ninjas"
         results = connectToMySQL(cls.db).query_db(query)
-        return [cls(i) for i in results]
+        lst = []
+        for i in results:
+            print(i)
+            x = cls(i)
+            x.address = Address.select_one(i)
+            lst.append(x)
+        return lst
         # return a list of classes in results
         # [{'id': 13, 'name': 'xtina.codes', 'dojo_id': 1, 'dojo': 'Online', 'street': '1605 Cullen Ave', 'city': 'Chesapeake', 'state': 'VA', 'zip': 23325, 'created_at': datetime.datetime(2022, 2, 28, 22, 17, 56), 'updated_at': datetime.datetime(2022, 2, 28, 22, 17, 56)}, {'id': 14, 'name': 'Santa', 'dojo_id': 1, 'dojo': 'Online', 'street': '3945 Reindeer Way', 'city': 'North Pole', 'state': 'AL', 'zip': 99502, 'created_at': datetime.datetime(2022, 2, 28, 22, 17, 56), 'updated_at': datetime.datetime(2022, 2, 28, 22, 17, 56)}, {'id': 15, 'name': 'Stitch', 'dojo_id': 1, 'dojo': 'Online', 'street': '593 Lilo Street', 'city': 'Ocean View', 'state': 'HI', 'zip': 96737, 'created_at': datetime.datetime(2022, 2, 28, 22, 17, 56), 'updated_at': datetime.datetime(2022, 2, 28, 22, 17, 56)}, {'id': 16, 'name': 'Grace Hopper', 'dojo_id': 1, 'dojo': 'Online', 'street': '92 Programming Way', 'city': 'New York', 'state': 'NY', 'zip': 10001, 'created_at': datetime.datetime(2022, 2, 28, 22, 17, 56), 'updated_at': datetime.datetime(2022, 2, 28, 22, 17, 56)}]
     
-    '''READ'''
-    @classmethod
+    '''READ ONE'''
+    @classmethod #
     def select_one(cls, data):
-        query = "SELECT ninjas.id, ninjas.name AS name, dojos.id AS dojo_id, dojos.name AS dojo, street, city, state, zip, ninjas.created_at, ninjas.updated_at  FROM ninjas JOIN addresses ON addresses.id = ninjas.address_id JOIN dojos ON dojos.id = ninjas.dojo_id WHERE ninjas.id=%(id)s"
-        results = connectToMySQL(cls.db).query_db(query, data)
-        return cls(results[0])
+        query = "SELECT * FROM ninjas WHERE id=%(id)s"
+        result = connectToMySQL(cls.db).query_db(query, data)
+        x = cls(result[0])
+        x.address = Address.select_one(result[0])
+        return x
         # returns first dictionary converted to a class
         # rather than a list of dicitonaries
+
+    @classmethod
+    def select_by_dojo(cls, data):
+        query = "SELECT * FROM ninjas WHERE dojo_id = %(id)s"
+        results = connectToMySQL(cls.db).query_db(query, data)
+        lst = []
+        for i in results:
+            x = cls(i)
+            x.address = Address.select_one(i)
+            lst.append(x)
+        print('select dojos')
+        print(lst)
+        return lst
 
     @classmethod
     def get_interests(cls, data):
@@ -42,36 +58,14 @@ class Ninja:
 
     '''CREATE'''
     @classmethod
-    def insert_address(cls, data):
-        query = "INSERT INTO addresses(street, city, state, zip) VALUES(%(street)s, %(city)s, %(state)s, %(zip)s)"
-        return connectToMySQL(cls.db).query_db(query, data)
-    
-    @classmethod
-    def insert_ninja(cls, data):
-        query="INSERT INTO ninjas(name, address_id, dojo_id) VALUES(%(name)s, %(address_id)s, %(dojo)s)"
+    def insert(cls, data):
+        query="INSERT INTO ninjas(name, address_id, dojo_id) VALUES(%(name)s, %(address_id)s, %(dojo_id)s)"
         return connectToMySQL(cls.db).query_db(query, data)
 
     '''UPDATE'''
     @classmethod
-    def get_address_id(cls, data):
-        query="SELECT address_id FROM ninjas WHERE ninjas.id = %(id)s"
-        result = connectToMySQL(cls.db).query_db(query, data)
-        return result[0]['address_id']
-        # return the value for 'address_id' key
-        # in the first dictionary from result list
-        # IN READ_NINJA.HTML
-    
-    @classmethod
-    def update_address(cls, data):
-        query="UPDATE addresses SET street=%(street)s, city=%(city)s, state=%(state)s, zip=%(zip)s WHERE id=%(address_id)s"
-        return connectToMySQL(cls.db).query_db(query, data)
-        # use address id from get_address_id()> send to form
-        # > from form from read_ninja.html
-        # returns noithing
-    
-    @classmethod
-    def update_ninja(cls, data):
-        query="UPDATE ninjas SET name=%(name)s, dojo_id=%(dojo)s WHERE id = %(id)s"
+    def update(cls, data):
+        query="UPDATE ninjas SET name=%(name)s, dojo_id=%(dojo_id)s WHERE id = %(id)s"
         return connectToMySQL(cls.db).query_db(query, data)
         # don't need to update address id, update for that happens in update_address()
         # from form from read_ninja.html
@@ -83,4 +77,9 @@ class Ninja:
     @classmethod
     def delete_address(cls,data):
         query="DELETE FROM addresses WHERE addresses.id=%(address_id)s"
+        return connectToMySQL(cls.db).query_db(query, data)
+    
+    @classmethod
+    def delete(cls,data):
+        query="DELETE FROM ninjas WHERE id=%(id)s"
         return connectToMySQL(cls.db).query_db(query, data)

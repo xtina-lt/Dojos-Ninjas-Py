@@ -18,6 +18,9 @@
         </th>
         <tr>
             <td>
+                {{output.id}}
+            </td>
+            <td>
                 {{output.name | title}}
             </td>
             <td>
@@ -48,15 +51,16 @@
             <tr>
                 <td>
                     <a href="/read/ninja/{{i['ninja_id']}}">
-                        {{i['ninja']| title}}
+                        {{i.name | title}}
                     </a>
                 </td>
                 <td>
-                    {{i['city'] | title}}, {{i.state | upper}}
+                    {{i.address.city | title}}, {{i.address.state | upper}}
                 </td>
                 <td>
-                    {{i['ni_id']}}
-                    <a href="/delete/ninjas_interests/{{output.id}}/{{i['ni_id']}}">Delete</a>
+                    <a href="/delete/ninjas_interests/{{output.id}}/{{i.id}}">
+                        Delete
+                    </a>
                 </td>
             </tr>
         {% endfor %}
@@ -99,8 +103,5 @@
         <!-- submit -->
         <input type="submit" value="Change me!">
     </form>
-</div>
-<div>
-    <a href="/read/interests">Go Back</a>
 </div>
 {%endblock%}

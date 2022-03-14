@@ -2,6 +2,7 @@
 {%block title%} Users {%endblock%}
 {%block header%} Output {%endblock%}
 {%block main%}
+<div>
     <form action="/process_edit" method="post">
         <!-- id -->
         <input type="hidden" name="id" value="{{output['id']}}"
@@ -28,5 +29,5 @@
         <!-- submit -->
         <input type="submit" value="Change Me..">
     </form>
-<a href="/read">Go Back</a>
+</div>
 {%endblock%}

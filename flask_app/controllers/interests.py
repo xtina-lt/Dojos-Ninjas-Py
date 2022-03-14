@@ -9,9 +9,9 @@ def read_interests():
     # 1) select * interests
     return render_template("read_interests.html", output = Interest.select_all())
 
-@app.route('/read/interest/<id>')
-def read_one(id):
-    data={"id": id}
+@app.route('/read/interest/<interest_id>')
+def read_one(interest_id):
+    data={"interest_id": interest_id}
     # 1) get interest id from url
     output = Interest.select_one(data)
     # 2) save interest class data
@@ -23,7 +23,7 @@ def read_one(id):
 '''CREATE'''
 @app.route("/process/new/interest", methods=["post"])
 def process_interest():
-    data={k:v for k,v in request.form.items()}
+    data=request.form
     # 1) get name and descriotion frm form
     Interest.insert_interest(data)
     # 2) insert into interests(name, description) VALUES(data)
@@ -31,7 +31,7 @@ def process_interest():
 
 @app.route("/process/new/ninjas_interest", methods=["POST"])
 def process_ninjas_interests():
-    data={k:v for k,v in request.form.items()}
+    data=request.form
     # 1) get form data values(ninja_id, interest_id)
     Interest.insert_ninjas_interests(data)
     # 2) insert into ninjas_interests values(data)
@@ -41,7 +41,7 @@ def process_ninjas_interests():
 '''UPDATE'''
 @app.route("/change/interest", methods=["post"])
 def change_interest():
-    data={k:v for k,v in request.form.items()}
+    data=request.form
     # 1) get id, name, description from form
     Interest.update_interest(data)
     # 2) update interests values(data) where id=data['id']
@@ -49,10 +49,10 @@ def change_interest():
 
 
 '''DELETE'''
-@app.route("/delete/ninjas_interests/<interest_id>/<ni_id>")
-def delete_ninjas_interests(ni_id, interest_id):
-    data={"ni_id": ni_id}
-    Interest.delete_interests_ninjas(data)
+@app.route("/delete/ninjas_interests/<interest_id>/<ninja_id>")
+def delete_ninjas_interests(interest_id, ninja_id):
+    data={"id" : ninja_id}
+    Interest.delete_interest_ninja(data)
     return redirect(f"/read/interest/{interest_id}")
 
 @app.route("/delete/interest/<id>")

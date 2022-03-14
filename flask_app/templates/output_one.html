@@ -2,30 +2,29 @@
 {%block title%} Users {%endblock%}
 {%block header%} Hello {{output['last_name']|capitalize}}, {{output['first_name']|capitalize}}!{%endblock%}
 {%block main%}
-<table>
-    <th>User</th>
-    <tr>
-        <td>
-            {{output['first_name']|capitalize}}
-        </td>
-    </tr>
-    <tr>
-        <td>
-            {{output['last_name']|capitalize}}
-        </td>
-    </tr>
-    <tr>
-        <td>
-            {{output['email']}}
-        </td>
-    </tr>
-    <tr>
-        <td>
-            {{output['password']}}
-        </td>
-    </tr>
-</table>
-<a href="/read">Go Back</a>
-<a href="/edit/{{output['id']}}">Edit</a>
-<a href="delete/{{output['id']}}">Delete</a>
+<div>
+    <table>
+        <th>User</th>
+        <tr>
+            <td>
+                {{output['first_name']|capitalize}}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                {{output['last_name']|capitalize}}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                {{output['email']}}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                {{output['password']}}
+            </td>
+        </tr>
+    </table>
+</div>
 {%endblock%}
