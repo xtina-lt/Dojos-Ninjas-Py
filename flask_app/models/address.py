@@ -14,10 +14,7 @@ class Address:
     def select_one(cls,data):
         query="SELECT * FROM addresses WHERE id=%(address_id)s"
         result = connectToMySQL(cls.db).query_db(query, data)
-        if result:
-            return cls(result[0])
-        else:
-            return False
+        return cls(result[0])
 
     '''CREATE'''
     @classmethod
@@ -30,7 +27,7 @@ class Address:
     def update(cls, data):
         query="UPDATE addresses SET street=%(street)s, city=%(city)s, state=%(state)s, zip=%(zip)s WHERE address id=%(address_id)s"
         return connectToMySQL(cls.db).query_db(query, data)
-    
+
     '''DELETE'''
     @classmethod
     def delete(cls, data):

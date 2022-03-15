@@ -1,32 +1,34 @@
 from flask import Flask, render_template, request, redirect
 # 1) import extentions
 from flask_app import app
+from flask_app.models.interest import Interest
 # 2) import application
 from flask_app.models.ninja import Ninja
 from flask_app.models.dojo import Dojo
-from flask_app.models.interest import Interest
 from flask_app.models.address import Address
 # 3) import models
 
+'''INDEX'''
 @app.route('/')
 def index():
     return render_template("index.html")
 
 
-'''READ'''
+'''READ ALL'''
 @app.route('/read/ninjas')
 def read_all():
     return render_template("read_ninjas.html", output = Ninja.select_all(), get=Dojo.select_all())
 
+'''READ ONE'''
 @app.route("/read/ninja/<id>")
 def read_ninja(id):
 # 1) take in id parameter
     data={"id": id}
     # 2) save to data dict
-    result = Ninja.select_one(data)
-    elements = Interest.select_one_ninja(data)
-    get_dojos = Dojo.select_all()
-    return render_template("read_ninja.html", output = result,  elements = elements, get = get_dojos)
+    return render_template("read_ninja.html", output = Ninja.select_one(data),  elements = Interest.get_interests(data), get = Dojo.select_all())
+    # 3) output = one ninja
+    # 3) elements = get interests
+    # 3) get dojos for select
 
 '''CREATE'''
 @app.route("/process/ninja", methods=["POST"])
@@ -78,7 +80,7 @@ def delete_ninja(id, address_id):
     Address.delete(data)
     return redirect("/read/ninjas")
 
-
+'''CATCHALL'''
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def catch(path):

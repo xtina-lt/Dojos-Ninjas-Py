@@ -1,4 +1,4 @@
-from flask_app.config.mysqlconnection import connectToMySQL
+from unittest import result
 from flask_app.config.mysqlconnection import connectToMySQL
 from flask_app.models.ninja import Ninja
 from flask_app.models.address import Address
@@ -8,34 +8,17 @@ class Dojo:
     def __init__(self, data):
         self.id = data["id"]
         self.name = data["name"]
-        self.address = None
-        self.holds = []
+        self.address = Address.select_one(data)
+        self.holds = self.select_by_dojo(data)
     
     '''READ'''
     @classmethod
     def select_all(cls): #
         query = "SELECT * FROM dojos"
         results = connectToMySQL(cls.db).query_db(query)
-        print(results)
         # 1) GET ALL ROWS FROM DB
         # [{'id': 1, 'name': 'Online', 'address_id': 1, 'created_at': datetime.datetime(2022, 3, 10, 14, 52, 17), 'updated_at': datetime.datetime(2022, 3, 10, 14, 52, 17)}, {'id': 2, 'name': 'Bellevue', 'address_id': 2, 'created_at': datetime.datetime(2022, 3, 10, 14, 52, 17), 'updated_at': datetime.datetime(2022, 3, 10, 14, 52, 17)}, {'id': 3, 'name': 'Boise', 'address_id': 3, 'created_at': datetime.datetime(2022, 3, 10, 14, 52, 17), 'updated_at': datetime.datetime(2022, 3, 10, 14, 52, 17)}, {'id': 4, 'name': 'Chicago', 'address_id': 4, 'created_at': datetime.datetime(2022, 3, 10, 14, 52, 17), 'updated_at': datetime.datetime(2022, 3, 10, 14, 52, 17)}, {'id': 5, 'name': 'Los Angeles', 'address_id': 5, 'created_at': datetime.datetime(2022, 3, 10, 14, 52, 17), 'updated_at': datetime.datetime(2022, 3, 10, 14, 52, 17)}, {'id': 6, 'name': 'Silicon Valley', 'address_id': 6, 'created_at': datetime.datetime(2022, 3, 10, 14, 52, 17), 'updated_at': datetime.datetime(2022, 3, 10, 14, 52, 17)}]
-        lst = []
-        # 2) DECLARE A LIST
-        for i in results:
-        # 3) iterate over results from db
-            x = cls(i)
-            # a) create a class for each data dict from each row
-            x.address = Address.select_one(i)
-            # # # b) use address id from data dict to get the address cls
-            # # # b) save to address attribute 
-            x.holds = Ninja.select_by_dojo(i)
-            # # c) get ninjas
-            # # c) use ninja id for WHERE dojo.id=%(id)s
-            lst.append(x)
-            # d) add to list
-        return lst
-        # 4) RETURN LST OF DOJO CLASS OBJECTS WITH ADDRESS CLS FROM RESULT
-        # [<flask_app.models.dojo.Dojo object at 0x000002193453B430>, <flask_app.models.dojo.Dojo object at 0x000002193453B250>, <flask_app.models.dojo.Dojo object at 0x000002193453B370>, <flask_app.models.dojo.Dojo object at 0x000002193453B2B0>, <flask_app.models.dojo.Dojo object at 0x000002193453A170>, <flask_app.models.dojo.Dojo object at 0x000002193453B670>]
+        return [cls(i) for i in results]
     
 
     @classmethod
@@ -44,11 +27,13 @@ class Dojo:
         result = connectToMySQL(cls.db).query_db(query, data)
         # {'id': 1, 'name': 'Online', 'address_id': 1, 'created_at': datetime.datetime(2022, 3, 10, 14, 52, 17), 'updated_at': datetime.datetime(2022, 3, 10, 14, 52, 17)}
         # if there is ninjas in the dojo
-        x = cls(result[0])
-        x.address = Address.select_one(result[0])
-        x.holds = Ninja.select_by_dojo(data)
-        return x
-
+        return cls(result[0])
+    
+    @classmethod
+    def select_by_dojo(cls, data):
+        query = "SELECT * FROM ninjas WHERE dojo_id = %(id)s"
+        results = connectToMySQL(cls.db).query_db(query, data)
+        return [Ninja(i) for i in results]
 
     '''CREATE'''
     @classmethod

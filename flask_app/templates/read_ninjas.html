@@ -3,8 +3,13 @@
 {%block header%} Ninjas {%endblock%}
 {%block main%}
 <div>
-    <h3>Ninjas</h3>
+    <h3>
+        Ninjas
+    </h3>
     <table>
+        <th>
+            ID
+        </th>
         <th>
             Name
         </th>
@@ -13,6 +18,9 @@
         </th>
         <th>
             State
+        </th>
+        <th>
+            Address ID
         </th>
         <th>
             Dojo
@@ -24,7 +32,12 @@
         <!-- select * from NINJAS -->
             <tr>
                 <td>
-                    <a href="/read/ninja/{{i.id}}">{{i.name}}</a>
+                    {{i.id}}
+                </td>
+                <td>
+                    <a href="/read/ninja/{{i.id}}">
+                        {{i.name}}
+                    </a>
                 </td>
                 <td>
                     {{i.address.city}}
@@ -33,10 +46,15 @@
                     {{i.address.state}}
                 </td>
                 <td>
+                    {{i.address.id}}
+                </td>
+                <td>
                     {{get[i.dojo_id].name}}
                 </td>
                 <td>
-                    <a href='/delete/ninja/{{i.id}}/{{i.address.id}}'>Delete  {{i.id}} {{i.address.id}}</a>
+                    <a href='/delete/ninja/{{i.id}}/{{i.address.id}}'>
+                        Delete
+                    </a>
                 </td>
             </tr>
         {%endfor%}

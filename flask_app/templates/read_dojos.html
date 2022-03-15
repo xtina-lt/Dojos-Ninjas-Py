@@ -8,6 +8,9 @@
     </h3>
     <table>
         <th>
+            ID
+        </th>
+        <th>
             Name
         </th>
         <th>
@@ -23,11 +26,17 @@
             Zip
         </th>
         <th>
+            Address ID
+        </th>
+        <th>
             Options
         </th>
         {% if output %}
         {%for i in output%}
             <tr>
+                <td>
+                    {{i.id}}
+                </td>
                 <td>
                     <a href="/read/dojo/{{i.id}}">
                         {{i.name.title()}}
@@ -46,7 +55,9 @@
                     {{i.address.zip}}
                 </td>
                 <td>
-                    {{i.id}} {{i.address.id}}
+                    {{i.address.id}}
+                </td>
+                <td>
                     <a href='/delete/dojo/{{i.id}}/{{i.address.id}}'>
                         Delete
                     </a>
