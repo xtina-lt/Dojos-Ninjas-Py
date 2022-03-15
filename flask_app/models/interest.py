@@ -9,12 +9,14 @@ class Interest:
         self.description = data["description"]
         self.holds = []
     
+    '''READ ALL'''
     @classmethod
     def select_all(cls):
         query = "SELECT * FROM interests"
         results = connectToMySQL(cls.db).query_db(query)
         return [cls(i) for i in results]
     
+    '''READ ONE'''
     @classmethod
     def select_one(cls, data):
         query = "SELECT * FROM ninjas_interests LEFT JOIN interests ON interests.id = ninjas_interests.interest_id LEFT JOIN ninjas ON ninjas.id = ninjas_interests.ninja_id WHERE interest_id = %(interest_id)s"
@@ -45,10 +47,11 @@ class Interest:
         # 2) if there are no users
             query = "SELECT * FROM interests WHERE id=%(interest_id)s"
             result = connectToMySQL(cls.db).query_db(query, data)
-            return result[0]
+            return cls(result[0])
             # {'id': 7, 'name': 'nothing', 'description': 'none', 'created_at': datetime.datetime(2022, 3, 15, 11, 1, 38), 'updated_at': datetime.datetime(2022, 3, 15, 11, 1, 38)}
             # 3) return intererst 
 
+    '''GET INTERESTS FOR NINJA'''
     @classmethod
     def get_interests(cls, data):
         query = "SELECT * FROM ninjas_interests LEFT JOIN interests ON interests.id = ninjas_interests.interest_id WHERE ninja_id = %(id)s"

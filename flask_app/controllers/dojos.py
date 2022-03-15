@@ -6,11 +6,8 @@ from flask_app.models.dojo import Address
 
 '''READ'''
 @app.route('/read/dojos')
-def read_dojos():
-    results = Dojo.select_all()
-    # Dojo.update({'id':18})
-    # [<flask_app.models.dojo.Dojo object at 0x0000024C3ECD6410>, <flask_app.models.dojo.Dojo object at 0x0000024C3ECD63B0>, <flask_app.models.dojo.Dojo object at 0x0000024C3ECD5FF0>, <flask_app.models.dojo.Dojo object at 0x0000024C3ECD6050>, <flask_app.models.dojo.Dojo object at 0x0000024C3ECD5F00>, <flask_app.models.dojo.Dojo object at 0x0000024C3ECD5F60>]
-    return render_template("read_dojos.html", output = results)
+def read_dojos(): 
+    return render_template("read_dojos.html", output = Dojo.select_all())
 
 @app.route("/read/dojo/<id>")
 def read_dojo(id):
@@ -42,7 +39,7 @@ def change_dojo():
     # 2) get dojo name and id from form
     Dojo.update_address(address)
     # 3) update address using address_id from form and inputs from form
-    Dojo.update_dojo(data)
+    Dojo.update(data)
     # 4) update ninja name
     # 4) don't need to update address id,
     #       just changed it in step 3

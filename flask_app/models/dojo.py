@@ -1,4 +1,3 @@
-from unittest import result
 from flask_app.config.mysqlconnection import connectToMySQL
 from flask_app.models.ninja import Ninja
 from flask_app.models.address import Address
@@ -9,7 +8,7 @@ class Dojo:
         self.id = data["id"]
         self.name = data["name"]
         self.address = Address.select_one(data)
-        self.holds = self.select_by_dojo(data)
+        self.holds = self.select_ninjas(data)
     
     '''READ'''
     @classmethod
@@ -30,7 +29,7 @@ class Dojo:
         return cls(result[0])
     
     @classmethod
-    def select_by_dojo(cls, data):
+    def select_ninjas(cls, data):
         query = "SELECT * FROM ninjas WHERE dojo_id = %(id)s"
         results = connectToMySQL(cls.db).query_db(query, data)
         return [Ninja(i) for i in results]
@@ -54,7 +53,7 @@ class Dojo:
         return connectToMySQL(cls.db).query_db(query, data)
     
     @classmethod
-    def update_dojo(cls, data):
+    def update(cls, data):
         query="UPDATE dojos SET name=%(name)s WHERE id=%(id)s"
         return connectToMySQL(cls.db).query_db(query, data)
     
